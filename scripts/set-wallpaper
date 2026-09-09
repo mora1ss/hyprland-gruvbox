@@ -3,7 +3,6 @@ set -u
 
 img="${1:-}"
 img="${img//\\ / }"
-img="${img//\/\//\/}"
 
 if [[ -z "${img}" ]]; then
   if [[ -f "${HOME}/.cache/hypr-wallpaper" ]]; then
@@ -21,10 +20,21 @@ fi
 mkdir -p "${HOME}/.cache"
 printf '%s\n' "${img}" > "${HOME}/.cache/hypr-wallpaper"
 
-if command -v swww >/dev/null; then
-  if ! swww query >/dev/null 2>&1; then
-    swww-daemon --format xrgb >/dev/null 2>&1 &
-    sleep 0.6
-  fi
+apply_awww() {
+  awww query >/dev/null 2>&1 || { awww-daemon >/dev/null 2>&1 & sleep 0.6; }
+  awww img "${img}"
+}
+
+apply_swww() {
+  swww query >/dev/null 2>&1 || { swww-daemon --format xrgb >/dev/null 2>&1 & sleep 0.6; }
   swww img "${img}" --transition-type none || swww img "${img}"
+}
+
+if command -v awww >/dev/null; then
+  apply_awww
+elif command -v swww >/dev/null; then
+  apply_swww
+else
+  printf 'set-wallpaper: instala awww (pacman -S awww)\n' >&2
+  exit 1
 fi

@@ -50,7 +50,7 @@ PACMAN_PKGS=(
   gvfs
   firefox
   hyprshot
-  swww
+  awww
   brightnessctl
   playerctl
   pavucontrol
@@ -378,11 +378,16 @@ cat > "${HQP_DIR}/commands.sh" <<'EOF'
 #!/usr/bin/env bash
 img="${1:-}"
 img="${img//\\ / }"
-if [[ ! -f "${img}" ]]; then
-  exit 1
+[[ -f "${img}" ]] || exit 1
+if command -v awww >/dev/null; then
+  awww query >/dev/null 2>&1 || { awww-daemon >/dev/null 2>&1 & sleep 0.6; }
+  exec awww img "${img}"
 fi
-swww query >/dev/null 2>&1 || { swww-daemon --format xrgb >/dev/null 2>&1 & sleep 0.6; }
-swww img "${img}" --transition-type none || swww img "${img}"
+if command -v swww >/dev/null; then
+  swww query >/dev/null 2>&1 || { swww-daemon --format xrgb >/dev/null 2>&1 & sleep 0.6; }
+  exec swww img "${img}" --transition-type none
+fi
+exit 1
 EOF
 chmod +x "${HQP_DIR}/commands.sh"
 mkdir -p "${HOME_DIR}/.cache/quickshell/hyprquickpaper"

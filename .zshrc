@@ -1,6 +1,7 @@
 # If you come from bash you might have to change your $PATH.
 export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH"
-# Sem ~ no teclado US: usa $HOME (nunca ./ no lugar do til)
+# Sem ~ no teclado US: usa $HOME. Atalho para o fundo:
+wallpaper() { "$HOME/.local/bin/set-wallpaper" "${1:-$HOME/Imagens/Wallpapers/rockman.png}"; }
 fastfetch
 export QT_QPA_PLATFORMTHEME=qt5ct
 # Path to your Oh My Zsh installation.
