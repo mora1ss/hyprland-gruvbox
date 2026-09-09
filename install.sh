@@ -114,6 +114,8 @@ if has_nvidia_gpu; then
     libva-nvidia-driver
     libva-utils
     egl-wayland
+    gst-plugin-va
+    gst-libav
   )
   for k in linux linux-lts linux-zen linux-hardened; do
     if pacman -Q "${k}" >/dev/null 2>&1; then
@@ -232,7 +234,10 @@ write_chromium_flags() {
   mkdir -p "$(dirname "${file}")"
   cat > "${file}" <<'EOF'
 --ozone-platform=wayland
+--ozone-platform-hint=auto
 --disable-gpu-sandbox
+--ignore-gpu-blocklist
+--enable-features=VaapiVideoDecoder,VaapiVideoEncoder,VaapiIgnoreDriverChecks,AcceleratedVideoDecodeLinuxGL,AcceleratedVideoDecodeLinuxZeroCopyGL
 EOF
 }
 
@@ -252,6 +257,7 @@ hl.env("GBM_BACKEND", "nvidia-drm")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("NVD_BACKEND", "direct")
 hl.env("MOZ_ENABLE_WAYLAND", "1")
+hl.env("MOZ_DISABLE_RDD_SANDBOX", "1")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
 hl.config({
@@ -261,21 +267,20 @@ hl.config({
 })
 EOF
 
-  local env_file=/etc/environment
-  local marker='# hyprland-gruvbox nvidia'
-  if ! sudo grep -qF "${marker}" "${env_file}" 2>/dev/null; then
-    sudo tee -a "${env_file}" >/dev/null <<EOF
-
-${marker}
+  sudo mkdir -p /etc/environment.d
+  sudo tee /etc/environment.d/90-nvidia-wayland.conf >/dev/null <<'EOF'
 GBM_BACKEND=nvidia-drm
 __GLX_VENDOR_LIBRARY_NAME=nvidia
+LIBVA_DRIVER_NAME=nvidia
+NVD_BACKEND=direct
 MOZ_ENABLE_WAYLAND=1
+MOZ_DISABLE_RDD_SANDBOX=1
 ELECTRON_OZONE_PLATFORM_HINT=auto
 EOF
-  fi
 
   sudo tee /etc/modprobe.d/nvidia.conf >/dev/null <<'EOF'
 options nvidia_drm modeset=1 fbdev=1
+options nvidia NVreg_PreserveVideoMemoryAllocations=1
 EOF
 
   if [[ -f /etc/mkinitcpio.conf ]] && ! grep -q 'nvidia_drm' /etc/mkinitcpio.conf; then
@@ -303,15 +308,28 @@ EOF
   sudo tee /etc/firefox/policies/policies.json >/dev/null <<'EOF'
 {
   "policies": {
+    "EncryptedMediaExtensions": {
+      "Enabled": true,
+      "Locked": false
+    },
+    "Cookies": {
+      "Allow": [
+        "https://www.amazon.com",
+        "https://www.amazon.es",
+        "https://www.amazon.pt",
+        "https://www.amazon.co.uk",
+        "https://www.primevideo.com",
+        "https://primevideo.com"
+      ]
+    },
     "Preferences": {
-      "media.hardware-video-decoding.force-enabled": {
-        "Value": true,
-        "Status": "user"
-      },
-      "widget.dmabuf.force-enabled": {
-        "Value": true,
-        "Status": "user"
-      }
+      "media.eme.enabled": { "Value": true, "Status": "user" },
+      "media.gmp-widevinecdm.enabled": { "Value": true, "Status": "user" },
+      "media.gmp-widevinecdm.visible": { "Value": true, "Status": "user" },
+      "media.hardware-video-decoding.force-enabled": { "Value": true, "Status": "user" },
+      "media.ffmpeg.vaapi.enabled": { "Value": true, "Status": "user" },
+      "media.rdd-ffmpeg.enabled": { "Value": true, "Status": "user" },
+      "widget.dmabuf.force-enabled": { "Value": true, "Status": "user" }
     }
   }
 }
@@ -376,16 +394,15 @@ EOF
 
 cat > "${HQP_DIR}/commands.sh" <<'EOF'
 #!/usr/bin/env bash
+if [[ -x "${HOME}/.local/bin/set-wallpaper" ]]; then
+  exec "${HOME}/.local/bin/set-wallpaper" "$1"
+fi
 img="${1:-}"
 img="${img//\\ / }"
 [[ -f "${img}" ]] || exit 1
 if command -v awww >/dev/null; then
   awww query >/dev/null 2>&1 || { awww-daemon >/dev/null 2>&1 & sleep 0.6; }
   exec awww img "${img}"
-fi
-if command -v swww >/dev/null; then
-  swww query >/dev/null 2>&1 || { swww-daemon --format xrgb >/dev/null 2>&1 & sleep 0.6; }
-  exec swww img "${img}" --transition-type none
 fi
 exit 1
 EOF

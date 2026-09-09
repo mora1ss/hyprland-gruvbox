@@ -4,12 +4,25 @@ set -u
 img="${1:-}"
 img="${img//\\ / }"
 
+pick_saved() {
+  local f p
+  for f in \
+    "${HOME}/.cache/hypr-wallpaper" \
+    "${HOME}/.cache/quickshell/hyprquickpaper/.current"
+  do
+    [[ -f "${f}" ]] || continue
+    p="$(tr -d '\n' < "${f}")"
+    p="${p//\\ / }"
+    if [[ -f "${p}" ]]; then
+      printf '%s\n' "${p}"
+      return 0
+    fi
+  done
+  printf '%s\n' "${HOME}/Imagens/Wallpapers/rockman.png"
+}
+
 if [[ -z "${img}" ]]; then
-  if [[ -f "${HOME}/.cache/hypr-wallpaper" ]]; then
-    img="$(tr -d '\n' < "${HOME}/.cache/hypr-wallpaper")"
-  else
-    img="${HOME}/Imagens/Wallpapers/rockman.png"
-  fi
+  img="$(pick_saved)"
 fi
 
 if [[ ! -f "${img}" ]]; then
