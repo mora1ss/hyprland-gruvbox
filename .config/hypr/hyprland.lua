@@ -17,8 +17,8 @@ hl.monitor({
 hl.on("hyprland.start", function()
   hl.exec_cmd("hyprctl dispatch workspace 1")
   hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
-  hl.exec_cmd("swww-daemon")
-  hl.exec_cmd("swww img " .. home .. "/Imagens/Wallpapers/rockman.png")
+  hl.exec_cmd("swww-daemon --format xrgb")
+  hl.exec_cmd("sh -c 'sleep 1; " .. home .. "/.local/bin/set-wallpaper'")
   hl.exec_cmd("waybar")
   hl.exec_cmd("dunst")
 end)
@@ -75,7 +75,7 @@ hl.config({
     disable_hyprland_logo = true,
   },
   input = {
-    kb_layout = "es",
+    kb_layout = "us",
     kb_variant = "",
     kb_model = "",
     kb_options = "",

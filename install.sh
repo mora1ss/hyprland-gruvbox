@@ -224,6 +224,7 @@ file://${HOME_DIR}/Ambiente%20de%20Trabalho Ambiente de Trabalho
 EOF
 
 install -m 755 "${DOTFILES}/scripts/hyprquickpaper" "${HOME_DIR}/.local/bin/hyprquickpaper"
+install -m 755 "${DOTFILES}/scripts/set-wallpaper" "${HOME_DIR}/.local/bin/set-wallpaper"
 xdg-user-dirs-update >/dev/null 2>&1 || true
 
 write_chromium_flags() {
@@ -375,16 +376,7 @@ EOF
 
 cat > "${HQP_DIR}/commands.sh" <<'EOF'
 #!/usr/bin/env bash
-set -euo pipefail
-img="${1:-}"
-if [[ -z "${img}" || ! -f "${img}" ]]; then
-  exit 1
-fi
-if ! pgrep -x swww-daemon >/dev/null 2>&1; then
-  swww-daemon >/dev/null 2>&1 &
-  sleep 0.4
-fi
-swww img "${img}" -t grow --transition-duration 1
+exec "$HOME/.local/bin/set-wallpaper" "$1"
 EOF
 chmod +x "${HQP_DIR}/commands.sh"
 mkdir -p "${HOME_DIR}/.cache/quickshell/hyprquickpaper"

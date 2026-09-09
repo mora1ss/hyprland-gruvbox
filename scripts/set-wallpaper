@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -u
+
+img="${1:-}"
+img="${img//\\ / }"
+img="${img//\/\//\/}"
+
+if [[ -z "${img}" ]]; then
+  if [[ -f "${HOME}/.cache/hypr-wallpaper" ]]; then
+    img="$(tr -d '\n' < "${HOME}/.cache/hypr-wallpaper")"
+  else
+    img="${HOME}/Imagens/Wallpapers/rockman.png"
+  fi
+fi
+
+if [[ ! -f "${img}" ]]; then
+  printf 'set-wallpaper: ficheiro inválido: %s\n' "${img}" >&2
+  exit 1
+fi
+
+mkdir -p "${HOME}/.cache"
+printf '%s\n' "${img}" > "${HOME}/.cache/hypr-wallpaper"
+
+if command -v swww >/dev/null; then
+  if ! swww query >/dev/null 2>&1; then
+    swww-daemon --format xrgb >/dev/null 2>&1 &
+    sleep 0.6
+  fi
+  swww img "${img}" --transition-type none || swww img "${img}"
+fi
