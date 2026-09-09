@@ -4,8 +4,8 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="${HOME}"
 CONFIG_DIR="${HOME_DIR}/.config"
-WALLPAPER_DIR="${HOME_DIR}/Pictures/Wallpapers"
-SCREENSHOT_DIR="${HOME_DIR}/Pictures/Capturas"
+WALLPAPER_DIR="${HOME_DIR}/Imagens/Wallpapers"
+SCREENSHOT_DIR="${HOME_DIR}/Imagens/Capturas"
 HQP_DIR="${CONFIG_DIR}/quickshell/hyprquickpaper"
 TMP_DIR="$(mktemp -d)"
 
@@ -92,6 +92,7 @@ PACMAN_PKGS=(
   wl-clipboard
   pciutils
   ffmpeg
+  xdg-user-dirs
 )
 
 AUR_PKGS=(
@@ -180,10 +181,49 @@ cp -a "${DOTFILES}/.config/GTK/gtk-4.0" "${CONFIG_DIR}/gtk-4.0"
 backup_if_exists "${HOME_DIR}/.zshrc"
 cp -a "${DOTFILES}/.zshrc" "${HOME_DIR}/.zshrc"
 
-mkdir -p "${WALLPAPER_DIR}" "${SCREENSHOT_DIR}"
+info "a criar pastas pessoais (Documentos, Transferências, Projetos, …)"
+mkdir -p \
+  "${HOME_DIR}/Ambiente de Trabalho" \
+  "${HOME_DIR}/Documentos" \
+  "${HOME_DIR}/Transferências" \
+  "${HOME_DIR}/Imagens" \
+  "${HOME_DIR}/Música" \
+  "${HOME_DIR}/Vídeos" \
+  "${HOME_DIR}/Modelos" \
+  "${HOME_DIR}/Público" \
+  "${HOME_DIR}/Projetos" \
+  "${WALLPAPER_DIR}" \
+  "${SCREENSHOT_DIR}" \
+  "${HOME_DIR}/.local/bin"
+
 if [[ -f "${DOTFILES}/wallpaper/rockman.png" ]]; then
   cp -a "${DOTFILES}/wallpaper/rockman.png" "${WALLPAPER_DIR}/rockman.png"
 fi
+
+cat > "${CONFIG_DIR}/user-dirs.dirs" <<EOF
+XDG_DESKTOP_DIR="\$HOME/Ambiente de Trabalho"
+XDG_DOWNLOAD_DIR="\$HOME/Transferências"
+XDG_TEMPLATES_DIR="\$HOME/Modelos"
+XDG_PUBLICSHARE_DIR="\$HOME/Público"
+XDG_DOCUMENTS_DIR="\$HOME/Documentos"
+XDG_MUSIC_DIR="\$HOME/Música"
+XDG_PICTURES_DIR="\$HOME/Imagens"
+XDG_VIDEOS_DIR="\$HOME/Vídeos"
+EOF
+echo 'pt_PT' > "${CONFIG_DIR}/user-dirs.locale"
+
+cat > "${CONFIG_DIR}/gtk-3.0/bookmarks" <<EOF
+file://${HOME_DIR}/Documentos Documentos
+file://${HOME_DIR}/Transferências Transferências
+file://${HOME_DIR}/Imagens Imagens
+file://${HOME_DIR}/Música Música
+file://${HOME_DIR}/Vídeos Vídeos
+file://${HOME_DIR}/Projetos Projetos
+file://${HOME_DIR}/Ambiente%20de%20Trabalho Ambiente de Trabalho
+EOF
+
+install -m 755 "${DOTFILES}/scripts/hyprquickpaper" "${HOME_DIR}/.local/bin/hyprquickpaper"
+xdg-user-dirs-update >/dev/null 2>&1 || true
 
 write_chromium_flags() {
   local file="$1"

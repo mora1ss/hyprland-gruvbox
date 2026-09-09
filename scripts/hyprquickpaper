@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WALL="${XDG_PICTURES_DIR:-$HOME/Imagens}/Wallpapers"
+mkdir -p "${WALL}" "${HOME}/.cache/quickshell/thumbs"
+
+if command -v quickshell >/dev/null; then
+  exec quickshell --no-duplicate -c hyprquickpaper "$@"
+fi
+
+if command -v qs >/dev/null; then
+  exec qs --no-duplicate -c hyprquickpaper "$@"
+fi
+
+notify-send "hyprquickpaper" "quickshell não está instalado" 2>/dev/null || true
+exit 1

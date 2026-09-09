@@ -29,7 +29,7 @@ The installer:
 - installs official packages with `pacman` and AUR packages with `yay` (builds `yay` if missing)
 - installs Oh My Zsh plus `zsh-autosuggestions` and `zsh-syntax-highlighting`
 - copies configs from `.config` into `~/.config` (GTK into `gtk-3.0` / `gtk-4.0`, not a `GTK/` folder)
-- copies `wallpaper/rockman.png` to `~/Pictures/Wallpapers/`
+- copies `wallpaper/rockman.png` to `~/Imagens/Wallpapers/`
 - configures SDDM (not Ly) with qylock Field
 - clones [hyprquickpaper](https://github.com/iamsurjog/hyprquickpaper) to `~/.config/quickshell/hyprquickpaper`
 - enables `sddm` and `NetworkManager`

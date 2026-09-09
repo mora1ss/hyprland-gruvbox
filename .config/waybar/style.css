@@ -86,18 +86,25 @@ tooltip {
 
 #workspaces button {
   all: initial;
-  min-width: 0;
+  min-width: 22px;
   font-family: "FiraCodeNerdFont", "iosevka nerd font";
   font-weight: bold;
   font-size: 14px;
   padding: 2.5px 7px;
   margin: 2px 3px;
-  color: #d4be98;
-  background: #32302f;
-  border: 1px solid transparent;
+  color: #a89984;
+  background: #3c3836;
+  border: 1px solid #504945;
   border-radius: 6px;
   transition: none;
 }
+
+#workspaces button.empty {
+  color: #7c6f64;
+  background: #32302f;
+  border: 1px solid #3c3836;
+}
+
 #workspaces button.active {
   background: #d4be98;
   color: #32302f;
