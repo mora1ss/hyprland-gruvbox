@@ -376,7 +376,13 @@ EOF
 
 cat > "${HQP_DIR}/commands.sh" <<'EOF'
 #!/usr/bin/env bash
-exec "$HOME/.local/bin/set-wallpaper" "$1"
+img="${1:-}"
+img="${img//\\ / }"
+if [[ ! -f "${img}" ]]; then
+  exit 1
+fi
+swww query >/dev/null 2>&1 || { swww-daemon --format xrgb >/dev/null 2>&1 & sleep 0.6; }
+swww img "${img}" --transition-type none || swww img "${img}"
 EOF
 chmod +x "${HQP_DIR}/commands.sh"
 mkdir -p "${HOME_DIR}/.cache/quickshell/hyprquickpaper"

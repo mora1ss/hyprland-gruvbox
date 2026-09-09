@@ -1,5 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH"
+# Sem ~ no teclado US: usa $HOME (nunca ./ no lugar do til)
 fastfetch
 export QT_QPA_PLATFORMTHEME=qt5ct
 # Path to your Oh My Zsh installation.
