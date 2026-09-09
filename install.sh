@@ -375,7 +375,16 @@ EOF
 
 cat > "${HQP_DIR}/commands.sh" <<'EOF'
 #!/usr/bin/env bash
-swww img "$1" -t grow --transition-duration 1
+set -euo pipefail
+img="${1:-}"
+if [[ -z "${img}" || ! -f "${img}" ]]; then
+  exit 1
+fi
+if ! pgrep -x swww-daemon >/dev/null 2>&1; then
+  swww-daemon >/dev/null 2>&1 &
+  sleep 0.4
+fi
+swww img "${img}" -t grow --transition-duration 1
 EOF
 chmod +x "${HQP_DIR}/commands.sh"
 mkdir -p "${HOME_DIR}/.cache/quickshell/hyprquickpaper"
