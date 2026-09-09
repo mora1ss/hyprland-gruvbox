@@ -110,7 +110,8 @@ hl.device({
 })
 
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + X", hl.dsp.window.close())
+hl.bind(mainMod .. " + X", hl.dsp.window.close(), { ignore_inhibit = true })
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.local/bin/hyprquickpaper"), { ignore_inhibit = true })
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprctl dispatch exit"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + J", hl.dsp.window.float({ action = "toggle" }))
@@ -120,7 +121,6 @@ hl.bind(mainMod .. " + B", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + T", hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("code"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("hyprshot -m output"))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.local/bin/hyprquickpaper"))
 
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))

@@ -326,14 +326,18 @@ EOF
 fi
 
 info "a instalar o tema Field do qylock para o SDDM"
-git clone --depth 1 https://github.com/Darkkal44/qylock.git "${TMP_DIR}/qylock"
-[[ -d "${TMP_DIR}/qylock/themes/field" ]] || die "tema field não encontrado no qylock"
+if [[ -f /usr/share/sddm/themes/field/Main.qml ]]; then
+  info "tema Field já está instalado; a saltar o download"
+else
+  git clone --depth 1 https://github.com/Darkkal44/qylock.git "${TMP_DIR}/qylock"
+  [[ -d "${TMP_DIR}/qylock/themes/field" ]] || die "tema field não encontrado no qylock"
+  sudo mkdir -p /usr/share/sddm/themes
+  sudo rm -rf /usr/share/sddm/themes/field
+  sudo cp -a "${TMP_DIR}/qylock/themes/field" /usr/share/sddm/themes/field
+fi
 
-sudo mkdir -p /usr/share/sddm/themes
-sudo rm -rf /usr/share/sddm/themes/field
-sudo cp -a "${TMP_DIR}/qylock/themes/field" /usr/share/sddm/themes/field
-
-if ! grep -q '^QtVersion=' /usr/share/sddm/themes/field/metadata.desktop 2>/dev/null; then
+if [[ -f /usr/share/sddm/themes/field/metadata.desktop ]] \
+  && ! grep -q '^QtVersion=' /usr/share/sddm/themes/field/metadata.desktop 2>/dev/null; then
   printf '\nQtVersion=6\n' | sudo tee -a /usr/share/sddm/themes/field/metadata.desktop >/dev/null
 fi
 

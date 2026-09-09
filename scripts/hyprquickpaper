@@ -4,12 +4,26 @@ set -euo pipefail
 WALL="${XDG_PICTURES_DIR:-$HOME/Imagens}/Wallpapers"
 mkdir -p "${WALL}" "${HOME}/.cache/quickshell/thumbs"
 
+qs_is_open() {
+  pgrep -af '(^|/)(quickshell|qs)( |$)' 2>/dev/null | grep -q -- '-c hyprquickpaper'
+}
+
+if [[ "${1:-}" == "--close" ]]; then
+  pkill -f -- '-c hyprquickpaper' 2>/dev/null || true
+  exit 0
+fi
+
+if qs_is_open; then
+  pkill -f -- '-c hyprquickpaper' 2>/dev/null || true
+  exit 0
+fi
+
 if command -v quickshell >/dev/null; then
-  exec quickshell --no-duplicate -c hyprquickpaper "$@"
+  exec quickshell -c hyprquickpaper "$@"
 fi
 
 if command -v qs >/dev/null; then
-  exec qs --no-duplicate -c hyprquickpaper "$@"
+  exec qs -c hyprquickpaper "$@"
 fi
 
 notify-send "hyprquickpaper" "quickshell não está instalado" 2>/dev/null || true
