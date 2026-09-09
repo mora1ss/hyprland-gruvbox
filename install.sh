@@ -15,6 +15,7 @@ cleanup() {
 trap cleanup EXIT
 
 info() { printf '\n==> %s\n' "$*"; }
+warn() { printf 'aviso: %s\n' "$*" >&2; }
 die() { printf 'erro: %s\n' "$*" >&2; exit 1; }
 
 if [[ "$(id -u)" -eq 0 ]]; then
@@ -25,6 +26,10 @@ command -v sudo >/dev/null || die "sudo é necessário"
 command -v git >/dev/null || {
   info "a instalar git"
   sudo pacman -Sy --needed --noconfirm git
+}
+
+has_nvidia_gpu() {
+  lspci 2>/dev/null | grep -qiE 'VGA compatible controller: NVIDIA|3D controller: NVIDIA'
 }
 
 PACMAN_PKGS=(
@@ -78,13 +83,15 @@ PACMAN_PKGS=(
   noto-fonts
   noto-fonts-emoji
   alacritty
-  hyprpolkitagent
+  polkit-kde-agent
   imagemagick
   jq
   code
   grim
   slurp
   wl-clipboard
+  pciutils
+  ffmpeg
 )
 
 AUR_PKGS=(
@@ -94,6 +101,27 @@ AUR_PKGS=(
 
 info "a actualizar o sistema e a instalar pacotes oficiais"
 sudo pacman -Syu --needed --noconfirm "${PACMAN_PKGS[@]}"
+
+if has_nvidia_gpu; then
+  info "GPU NVIDIA detectada: a instalar drivers e VA-API (DRM / Prime Video)"
+  NVIDIA_PKGS=(
+    nvidia-open
+    nvidia-utils
+    nvidia-settings
+    libva
+    libva-nvidia-driver
+    libva-utils
+    egl-wayland
+  )
+  for k in linux linux-lts linux-zen linux-hardened; do
+    if pacman -Q "${k}" >/dev/null 2>&1; then
+      NVIDIA_PKGS+=("${k}-headers")
+    fi
+  done
+  sudo pacman -S --needed --noconfirm "${NVIDIA_PKGS[@]}"
+else
+  warn "nenhuma GPU NVIDIA detectada; a saltar drivers NVIDIA (normal numa VM)"
+fi
 
 if ! command -v yay >/dev/null; then
   info "a instalar yay"
@@ -157,6 +185,104 @@ if [[ -f "${DOTFILES}/wallpaper/rockman.png" ]]; then
   cp -a "${DOTFILES}/wallpaper/rockman.png" "${WALLPAPER_DIR}/rockman.png"
 fi
 
+write_chromium_flags() {
+  local file="$1"
+  mkdir -p "$(dirname "${file}")"
+  cat > "${file}" <<'EOF'
+--ozone-platform=wayland
+--disable-gpu-sandbox
+EOF
+}
+
+write_chromium_flags "${CONFIG_DIR}/chromium-flags.conf"
+write_chromium_flags "${CONFIG_DIR}/chrome-flags.conf"
+write_chromium_flags "${CONFIG_DIR}/brave-flags.conf"
+write_chromium_flags "${CONFIG_DIR}/code-flags.conf"
+write_chromium_flags "${CONFIG_DIR}/electron-flags.conf"
+
+configure_nvidia() {
+  info "a aplicar configuração NVIDIA (DRM, VA-API, Firefox)"
+
+  cat > "${CONFIG_DIR}/hypr/nvidia.conf" <<'EOF'
+env = LIBVA_DRIVER_NAME,nvidia
+env = XDG_SESSION_TYPE,wayland
+env = GBM_BACKEND,nvidia-drm
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = NVD_BACKEND,direct
+env = MOZ_ENABLE_WAYLAND,1
+env = ELECTRON_OZONE_PLATFORM_HINT,auto
+
+cursor {
+    no_hardware_cursors = true
+}
+EOF
+
+  local env_file=/etc/environment
+  local marker='# hyprland-gruvbox nvidia'
+  if ! sudo grep -qF "${marker}" "${env_file}" 2>/dev/null; then
+    sudo tee -a "${env_file}" >/dev/null <<EOF
+
+${marker}
+GBM_BACKEND=nvidia-drm
+__GLX_VENDOR_LIBRARY_NAME=nvidia
+MOZ_ENABLE_WAYLAND=1
+ELECTRON_OZONE_PLATFORM_HINT=auto
+EOF
+  fi
+
+  sudo tee /etc/modprobe.d/nvidia.conf >/dev/null <<'EOF'
+options nvidia_drm modeset=1 fbdev=1
+EOF
+
+  if [[ -f /etc/mkinitcpio.conf ]] && ! grep -q 'nvidia_drm' /etc/mkinitcpio.conf; then
+    sudo sed -i 's/^MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /' /etc/mkinitcpio.conf
+    sudo mkinitcpio -P
+  fi
+
+  local kparams='nvidia-drm.modeset=1 nvidia-drm.fbdev=1'
+  if [[ -d /boot/loader/entries ]]; then
+    for entry in /boot/loader/entries/*.conf; do
+      [[ -f "${entry}" ]] || continue
+      if ! sudo grep -q 'nvidia-drm.modeset' "${entry}"; then
+        sudo sed -i "/^options / s|$| ${kparams}|" "${entry}"
+      fi
+    done
+  fi
+  if [[ -f /etc/default/grub ]] && ! grep -q 'nvidia-drm.modeset' /etc/default/grub; then
+    sudo sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"/GRUB_CMDLINE_LINUX_DEFAULT=\"${kparams} /" /etc/default/grub
+    if command -v grub-mkconfig >/dev/null; then
+      sudo grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+  fi
+
+  sudo mkdir -p /etc/firefox/policies
+  sudo tee /etc/firefox/policies/policies.json >/dev/null <<'EOF'
+{
+  "policies": {
+    "Preferences": {
+      "media.hardware-video-decoding.force-enabled": {
+        "Value": true,
+        "Status": "user"
+      },
+      "widget.dmabuf.force-enabled": {
+        "Value": true,
+        "Status": "user"
+      }
+    }
+  }
+}
+EOF
+}
+
+if has_nvidia_gpu; then
+  configure_nvidia
+else
+  mkdir -p "${CONFIG_DIR}/hypr"
+  cat > "${CONFIG_DIR}/hypr/nvidia.conf" <<'EOF'
+# Sem GPU NVIDIA: ficheiro vazio de propósito.
+EOF
+fi
+
 info "a instalar o tema Field do qylock para o SDDM"
 git clone --depth 1 https://github.com/Darkkal44/qylock.git "${TMP_DIR}/qylock"
 [[ -d "${TMP_DIR}/qylock/themes/field" ]] || die "tema field não encontrado no qylock"
@@ -207,16 +333,38 @@ sudo systemctl enable NetworkManager.service
 sudo systemctl enable sddm.service
 sudo systemctl enable --now pipewire.socket pipewire-pulse.socket wireplumber.service 2>/dev/null || true
 
+retry_user_password() {
+  local prompt="$1"
+  shift
+  local attempt=1
+  local max=5
+  set +e
+  while (( attempt <= max )); do
+    info "${prompt} (tentativa ${attempt}/${max})"
+    if "$@"; then
+      set -e
+      return 0
+    fi
+    warn "palavra-passe incorrecta ou comando falhou; tenta outra vez"
+    attempt=$((attempt + 1))
+  done
+  set -e
+  die "falhou após ${max} tentativas"
+}
+
 ZSH_PATH="$(command -v zsh)"
 if [[ "${SHELL}" != "${ZSH_PATH}" ]]; then
   info "a definir zsh como shell por omissão"
   if ! grep -qxF "${ZSH_PATH}" /etc/shells; then
     echo "${ZSH_PATH}" | sudo tee -a /etc/shells >/dev/null
   fi
-  chsh -s "${ZSH_PATH}"
+  retry_user_password "introduz a palavra-passe da tua conta para o chsh" chsh -s "${ZSH_PATH}"
 fi
 
 info "instalação concluída"
 printf '%s\n' \
   "Reinicia o computador para entrar pelo SDDM (tema Field)." \
-  "No Hyprland: Control+W abre o hyprquickpaper; Control+N tira um screenshot."
+  "No Hyprland: Super+W abre o hyprquickpaper; Super+N tira um screenshot."
+if has_nvidia_gpu; then
+  printf '%s\n' "NVIDIA DRM activo: depois do reboot confirma com: cat /sys/module/nvidia_drm/parameters/modeset (deve ser Y)."
+fi
