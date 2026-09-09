@@ -203,18 +203,20 @@ write_chromium_flags "${CONFIG_DIR}/electron-flags.conf"
 configure_nvidia() {
   info "a aplicar configuração NVIDIA (DRM, VA-API, Firefox)"
 
-  cat > "${CONFIG_DIR}/hypr/nvidia.conf" <<'EOF'
-env = LIBVA_DRIVER_NAME,nvidia
-env = XDG_SESSION_TYPE,wayland
-env = GBM_BACKEND,nvidia-drm
-env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-env = NVD_BACKEND,direct
-env = MOZ_ENABLE_WAYLAND,1
-env = ELECTRON_OZONE_PLATFORM_HINT,auto
+  cat > "${CONFIG_DIR}/hypr/nvidia.lua" <<'EOF'
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("XDG_SESSION_TYPE", "wayland")
+hl.env("GBM_BACKEND", "nvidia-drm")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("NVD_BACKEND", "direct")
+hl.env("MOZ_ENABLE_WAYLAND", "1")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 
-cursor {
-    no_hardware_cursors = true
-}
+hl.config({
+  cursor = {
+    no_hardware_cursors = true,
+  },
+})
 EOF
 
   local env_file=/etc/environment
@@ -278,8 +280,8 @@ if has_nvidia_gpu; then
   configure_nvidia
 else
   mkdir -p "${CONFIG_DIR}/hypr"
-  cat > "${CONFIG_DIR}/hypr/nvidia.conf" <<'EOF'
-# Sem GPU NVIDIA: ficheiro vazio de propósito.
+  cat > "${CONFIG_DIR}/hypr/nvidia.lua" <<'EOF'
+-- Sem GPU NVIDIA: ficheiro vazio de propósito.
 EOF
 fi
 

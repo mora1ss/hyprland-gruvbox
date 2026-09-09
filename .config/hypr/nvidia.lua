@@ -1,0 +1,1 @@
+-- NVIDIA env is written here by install.sh when a GPU is detected.
