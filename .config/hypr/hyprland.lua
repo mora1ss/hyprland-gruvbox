@@ -110,8 +110,8 @@ hl.device({
 })
 
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + X", hl.dsp.window.close(), { ignore_inhibit = true })
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.local/bin/hyprquickpaper"), { ignore_inhibit = true })
+hl.bind(mainMod .. " + X", hl.dsp.window.close(), { dont_inhibit = true, allow_input_capture = true })
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.local/bin/hyprquickpaper"), { dont_inhibit = true, allow_input_capture = true })
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprctl dispatch exit"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + J", hl.dsp.window.float({ action = "toggle" }))

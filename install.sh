@@ -93,6 +93,7 @@ PACMAN_PKGS=(
   pciutils
   ffmpeg
   xdg-user-dirs
+  file
 )
 
 AUR_PKGS=(
@@ -357,10 +358,18 @@ fi
 cat > "${HQP_DIR}/config.json" <<EOF
 {
     "wallpaper_path": "${WALLPAPER_DIR}/",
-    "cache_path": "${HOME_DIR}/.cache/quickshell/thumbs/",
-    "number_of_pictures": 7,
-    "border_color": "#A98881",
-    "cache_batch_size": 20
+    "cache_path": "${HOME_DIR}/.cache/quickshell/hyprquickpaper/",
+    "number_of_pictures": 6,
+    "cache_batch_size": 20,
+    "height": 500,
+    "x_factor": -0.25,
+    "keep_open": false
+}
+EOF
+
+cat > "${HQP_DIR}/colors.json" <<'EOF'
+{
+    "border_color": "#A98881"
 }
 EOF
 
@@ -369,7 +378,7 @@ cat > "${HQP_DIR}/commands.sh" <<'EOF'
 swww img "$1" -t grow --transition-duration 1
 EOF
 chmod +x "${HQP_DIR}/commands.sh"
-mkdir -p "${HOME_DIR}/.cache/quickshell/thumbs"
+mkdir -p "${HOME_DIR}/.cache/quickshell/hyprquickpaper"
 
 info "a activar serviços"
 if systemctl list-unit-files ly.service >/dev/null 2>&1; then

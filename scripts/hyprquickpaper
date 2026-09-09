@@ -1,30 +1,26 @@
 #!/usr/bin/env bash
+# Starts hyprquickpaper, or closes it if it is already running.
+# Only matches the real quickshell process, never this launcher.
 set -euo pipefail
 
 WALL="${XDG_PICTURES_DIR:-$HOME/Imagens}/Wallpapers"
-mkdir -p "${WALL}" "${HOME}/.cache/quickshell/thumbs"
+mkdir -p "${WALL}" "${HOME}/.cache/quickshell/hyprquickpaper"
 
-qs_is_open() {
-  pgrep -af '(^|/)(quickshell|qs)( |$)' 2>/dev/null | grep -q -- '-c hyprquickpaper'
-}
-
-if [[ "${1:-}" == "--close" ]]; then
-  pkill -f -- '-c hyprquickpaper' 2>/dev/null || true
-  exit 0
-fi
-
-if qs_is_open; then
-  pkill -f -- '-c hyprquickpaper' 2>/dev/null || true
-  exit 0
-fi
-
+qs_bin=""
 if command -v quickshell >/dev/null; then
-  exec quickshell -c hyprquickpaper "$@"
+  qs_bin="$(command -v quickshell)"
+elif command -v qs >/dev/null; then
+  qs_bin="$(command -v qs)"
+else
+  notify-send "hyprquickpaper" "quickshell não está instalado" 2>/dev/null || true
+  exit 1
 fi
 
-if command -v qs >/dev/null; then
-  exec qs -c hyprquickpaper "$@"
+pids="$(pgrep -f "^${qs_bin} .*hyprquickpaper" || true)"
+if [[ -n "${pids}" ]]; then
+  # shellcheck disable=SC2086
+  kill ${pids} 2>/dev/null || true
+  exit 0
 fi
 
-notify-send "hyprquickpaper" "quickshell não está instalado" 2>/dev/null || true
-exit 1
+exec "${qs_bin}" -c hyprquickpaper
