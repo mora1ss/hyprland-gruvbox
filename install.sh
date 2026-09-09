@@ -89,6 +89,8 @@ PACMAN_PKGS=(
   code
   grim
   slurp
+  hyprpicker
+  libnotify
   wl-clipboard
   pciutils
   ffmpeg
@@ -448,7 +450,7 @@ fi
 info "instalação concluída"
 printf '%s\n' \
   "Reinicia o computador para entrar pelo SDDM (tema Field)." \
-  "No Hyprland: Super+W abre o hyprquickpaper; Super+N tira um screenshot."
+  "No Hyprland: Super+W wallpapers; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
 if has_nvidia_gpu; then
   printf '%s\n' "NVIDIA DRM activo: depois do reboot confirma com: cat /sys/module/nvidia_drm/parameters/modeset (deve ser Y)."
 fi
