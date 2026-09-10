@@ -252,9 +252,23 @@ ShellRoot {
       hoverEnabled: true
       cursorShape: mediaBtn.canUse ? Qt.PointingHandCursor : Qt.ArrowCursor
       onClicked: if (mediaBtn.canUse) mediaBtn.clicked()
-      ToolTip.visible: containsMouse
-      ToolTip.delay: 250
-      ToolTip.text: mediaBtn.label
+
+      ToolTip {
+        visible: mouse.containsMouse
+        delay: 250
+        contentItem: Text {
+          text: mediaBtn.label
+          color: "#fbf1c7"
+          font.family: "FiraCode Nerd Font Mono"
+          font.pixelSize: 14
+          font.bold: true
+        }
+        background: Rectangle {
+          color: "#32302f"
+          border.color: "#252423"
+          border.width: 1
+        }
+      }
     }
 
     Text {
@@ -285,9 +299,23 @@ ShellRoot {
       hoverEnabled: true
       cursorShape: Qt.PointingHandCursor
       onClicked: sysBtn.clicked()
-      ToolTip.visible: containsMouse
-      ToolTip.delay: 250
-      ToolTip.text: sysBtn.label
+
+      ToolTip {
+        visible: mouse.containsMouse
+        delay: 250
+        contentItem: Text {
+          text: sysBtn.label
+          color: "#fbf1c7"
+          font.family: "FiraCode Nerd Font Mono"
+          font.pixelSize: 14
+          font.bold: true
+        }
+        background: Rectangle {
+          color: "#32302f"
+          border.color: "#252423"
+          border.width: 1
+        }
+      }
     }
 
     Text {

@@ -23,6 +23,14 @@ window#waybar,
 tooltip {
   background-color: #32302f;
   border: 1px solid #252423;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+tooltip label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fbf1c7;
 }
 
 /* ================================ */
@@ -33,7 +41,6 @@ tooltip {
 #memory,
 #battery,
 #temperature,
-#network,
 #pulseaudio,
 #clock.date {
   margin: 2px 10px 2px 3px;
@@ -199,10 +206,6 @@ tooltip {
   color: #d8a657;
 }
 
-#network {
-  color: #83a598;
-}
-
 #temperature {
   color: #d8a657;
 }
@@ -228,8 +231,7 @@ tooltip {
 #cpu.critical,
 #memory.critical,
 #temperature.critical,
-#battery.critical,
-#network.disconnected {
+#battery.critical {
   color: #ea6962;
 }
 

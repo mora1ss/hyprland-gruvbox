@@ -23,8 +23,8 @@
     "battery#bat1",
     "temperature",
     "battery#bat2",
-    "network",
     "pulseaudio",
+    "clock#date"
     "clock#date"
   ],
 
@@ -129,16 +129,6 @@
     "format-empty": " {capacity}%",
     "format-full": " {capacity}%",
     "format-icons": ["", "", "", "", ""]
-  },
-
-  "network": {
-    "format-wifi": " ",
-    "format-ethernet": " ",
-    "format-disconnected": "⚠ ",
-    "tooltip-format": "{essid}\n{ipaddr}/{cidr}",
-    "tooltip": true,
-    "on-click": "alacritty -e nmtui",
-    "interval": 5
   },
 
   "pulseaudio": {
