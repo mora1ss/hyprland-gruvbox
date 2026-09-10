@@ -3,14 +3,11 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
-import Quickshell.Wayland
 
 ShellRoot {
-  PanelWindow {
+  FloatingWindow {
     id: win
 
-    property int cardWidth: 720
-    property int cardHeight: 480
     property int page: 0
     readonly property string ctl: `${Quickshell.shellDir}/ctl.sh`
     property string wifiRadio: "off"
@@ -33,24 +30,38 @@ ShellRoot {
     property string distro: ""
     property double sliderUntil: 0
 
-    anchors.top: true
-    anchors.left: true
-    margins.top: 52
-    margins.left: Math.max(0, Math.round(((screen?.width ?? 1920) - cardWidth) / 2))
-    implicitWidth: cardWidth
-    implicitHeight: cardHeight
-    color: "transparent"
-    exclusionMode: ExclusionMode.Ignore
-    exclusiveZone: 0
-    focusable: true
-    aboveWindows: true
-    WlrLayershell.namespace: "settings-panel"
-    WlrLayershell.layer: WlrLayer.Overlay
+    title: "Definições"
+    implicitWidth: 720
+    implicitHeight: 480
+    minimumSize: Qt.size(560, 360)
+    color: "#32302f"
 
     Keys.onEscapePressed: Qt.quit()
+    onClosed: Qt.quit()
+
+    Shortcut {
+      sequence: "Escape"
+      onActivated: Qt.quit()
+    }
 
     function runCtl(args) {
       Quickshell.execDetached([ctl].concat(args))
+    }
+
+    function notify(summary, body, tag) {
+      const cmd = ["notify-send", "-a", "Definições", "-u", "low"]
+      if (tag)
+        cmd.push("-h", "string:x-canonical-private-synchronous:" + tag)
+      cmd.push("--", summary)
+      if (body)
+        cmd.push(body)
+      Quickshell.execDetached(cmd)
+    }
+
+    function apply(args, summary, body, tag) {
+      runCtl(args)
+      notify(summary, body, tag)
+      afterSet()
     }
 
     function kick(proc) {
@@ -115,10 +126,9 @@ ShellRoot {
     Rectangle {
       anchors.fill: parent
       color: "#32302f"
-      border.color: "#d4be98"
-      border.width: 2
-      radius: 12
       clip: true
+      focus: true
+      Component.onCompleted: forceActiveFocus()
 
       RowLayout {
         anchors.fill: parent
@@ -550,8 +560,8 @@ ShellRoot {
       ToggleChip {
         on: win.wifiRadio === "on"
         onClicked: {
-          win.runCtl(["wifi-radio-set", win.wifiRadio === "on" ? "off" : "on"])
-          win.afterSet()
+          const on = win.wifiRadio !== "on"
+          win.apply(["wifi-radio-set", on ? "on" : "off"], "Wi-Fi", on ? "Ligado" : "Desligado")
         }
       }
 
@@ -567,9 +577,8 @@ ShellRoot {
           onClicked: {
             const open = !modelData.security || modelData.security === "--"
             if (open) {
-              win.runCtl(["wifi-connect", modelData.ssid])
               win.pendingSsid = ""
-              win.afterSet()
+              win.apply(["wifi-connect", modelData.ssid], "Wi-Fi", "A ligar a «" + modelData.ssid + "»")
             } else {
               win.pendingSsid = modelData.ssid
               win.pendingSec = modelData.security
@@ -598,10 +607,10 @@ ShellRoot {
         Chip {
           label: "Ligar"
           onClicked: {
-            win.runCtl(["wifi-connect", win.pendingSsid, wifiPass.text])
+            const ssid = win.pendingSsid
+            win.apply(["wifi-connect", ssid, wifiPass.text], "Wi-Fi", "A ligar a «" + ssid + "»")
             win.pendingSsid = ""
             wifiPass.text = ""
-            win.afterSet()
           }
         }
       }
@@ -613,8 +622,8 @@ ShellRoot {
       ToggleChip {
         on: win.airplane === "on"
         onClicked: {
-          win.runCtl(["airplane-set", win.airplane === "on" ? "off" : "on"])
-          win.afterSet()
+          const on = win.airplane !== "on"
+          win.apply(["airplane-set", on ? "on" : "off"], "Modo de voo", on ? "Ligado" : "Desligado")
         }
       }
     }
@@ -640,6 +649,16 @@ ShellRoot {
         onMoved: {
           win.lockSlider()
           brightWait.restart()
+        }
+        onPressedChanged: {
+          if (pressed)
+            return
+          brightWait.stop()
+          const v = Math.round(value)
+          win.lockSlider()
+          win.runCtl(["brightness-set", String(v)])
+          win.brightness = String(v)
+          win.notify("Brilho", "Definido para " + v + "%", "settings-brightness")
         }
       }
       Timer {
@@ -671,8 +690,11 @@ ShellRoot {
               label: modelData
               selected: modelData.indexOf(monBox.modelData.res) === 0
               onClicked: {
-                win.runCtl(["monitor-set", monBox.modelData.name, modelData, monBox.modelData.scale])
-                win.afterSet()
+                win.apply(
+                  ["monitor-set", monBox.modelData.name, modelData, monBox.modelData.scale],
+                  "Ecrã",
+                  monBox.modelData.name + " · resolução " + modelData
+                )
               }
             }
           }
@@ -690,8 +712,11 @@ ShellRoot {
                   const mon = monBox.modelData
                   const hit = (mon.modes || []).find(m => m.indexOf(mon.res) === 0)
                   const mode = hit || (mon.res + "@" + mon.refresh)
-                  win.runCtl(["monitor-set", mon.name, mode, modelData])
-                  win.afterSet()
+                  win.apply(
+                    ["monitor-set", mon.name, mode, modelData],
+                    "Ecrã",
+                    mon.name + " · escala " + modelData + "×"
+                  )
                 }
               }
             }
@@ -722,6 +747,16 @@ ShellRoot {
           win.lockSlider()
           volWait.restart()
         }
+        onPressedChanged: {
+          if (pressed)
+            return
+          volWait.stop()
+          const v = Math.round(value)
+          win.lockSlider()
+          win.runCtl(["volume-set", String(v)])
+          win.volume = String(v)
+          win.notify("Volume", "Definido para " + v + "%", "settings-volume")
+        }
       }
       Timer {
         id: volWait
@@ -742,8 +777,7 @@ ShellRoot {
           label: modelData
           selected: modelData === win.defaultSink
           onClicked: {
-            win.runCtl(["sink-set", modelData])
-            win.afterSet()
+            win.apply(["sink-set", modelData], "Som", "Saída: " + modelData)
           }
         }
       }
@@ -757,8 +791,7 @@ ShellRoot {
           label: modelData
           selected: modelData === win.defaultSource
           onClicked: {
-            win.runCtl(["source-set", modelData])
-            win.afterSet()
+            win.apply(["source-set", modelData], "Som", "Microfone: " + modelData)
           }
         }
       }
@@ -778,14 +811,17 @@ ShellRoot {
       ToggleChip {
         on: win.btPower === "yes"
         onClicked: {
-          win.runCtl(["bt-power-set", win.btPower === "yes" ? "off" : "on"])
-          win.afterSet()
+          const on = win.btPower !== "yes"
+          win.apply(["bt-power-set", on ? "on" : "off"], "Bluetooth", on ? "Ligado" : "Desligado")
         }
       }
       Chip {
         label: "Procurar dispositivos"
         enabled: win.btPower === "yes"
-        onClicked: win.scanBt()
+        onClicked: {
+          win.notify("Bluetooth", "A procurar dispositivos")
+          win.scanBt()
+        }
       }
       Heading { text: "Dispositivos" }
       EmptyHint { visible: win.btDevices.length === 0 }
@@ -796,8 +832,11 @@ ShellRoot {
           label: (modelData.name || modelData.mac) + "  " + modelData.mac
           enabled: win.btPower === "yes"
           onClicked: {
-            win.runCtl(["bt-connect", modelData.mac])
-            win.afterSet()
+            win.apply(
+              ["bt-connect", modelData.mac],
+              "Bluetooth",
+              "A ligar a " + (modelData.name || modelData.mac)
+            )
           }
         }
       }
@@ -837,9 +876,14 @@ ShellRoot {
           label: modelData.label
           selected: win.timeoutMins === modelData.mins
           onClicked: {
-            win.runCtl(["timeout-set", modelData.mins])
             win.timeoutMins = modelData.mins
-            win.afterSet()
+            win.apply(
+              ["timeout-set", modelData.mins],
+              "Energia",
+              modelData.mins === "0"
+                ? "O ecrã não desliga automaticamente"
+                : "O ecrã desliga após " + modelData.label
+            )
           }
         }
       }
