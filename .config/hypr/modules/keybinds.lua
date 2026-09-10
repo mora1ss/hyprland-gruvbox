@@ -5,8 +5,9 @@ local fileManager = v.fileManager
 local menu = v.menu
 local mainMod = v.mainMod
 
-hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + X", hl.dsp.window.close(), { dont_inhibit = true, allow_input_capture = true })
+hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(home .. "/.local/bin/session-panel"), { dont_inhibit = true, allow_input_capture = true })
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(home .. "/.local/bin/close-window"), { dont_inhibit = true, allow_input_capture = true })
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.local/bin/hyprquickpaper"), { dont_inhibit = true, allow_input_capture = true })
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd(home .. "/.local/bin/settings-panel"), { dont_inhibit = true, allow_input_capture = true })
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprctl dispatch exit"))

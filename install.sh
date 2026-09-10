@@ -259,6 +259,7 @@ install -m 755 "${DOTFILES}/scripts/hyprquickpaper" "${HOME_DIR}/.local/bin/hypr
 install -m 755 "${DOTFILES}/scripts/set-wallpaper" "${HOME_DIR}/.local/bin/set-wallpaper"
 install -m 755 "${DOTFILES}/scripts/session-panel" "${HOME_DIR}/.local/bin/session-panel"
 install -m 755 "${DOTFILES}/scripts/settings-panel" "${HOME_DIR}/.local/bin/settings-panel"
+install -m 755 "${DOTFILES}/scripts/close-window" "${HOME_DIR}/.local/bin/close-window"
 mkdir -p "${HOME_DIR}/.local/share/applications"
 install -m 644 "${DOTFILES}/.local/share/applications/mpv.desktop" "${HOME_DIR}/.local/share/applications/mpv.desktop"
 if command -v update-desktop-database >/dev/null; then
@@ -518,7 +519,7 @@ fi
 info "instalação concluída"
 printf '%s\n' \
   "Reinicia o computador para entrar pelo SDDM (tema Field)." \
-  "No Hyprland: Super+W wallpapers; Super+I definições; ícone Arch no relógio abre o painel de sessão; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
+  "No Hyprland: Super+Enter terminal; Super+F sessão; Super+W wallpapers; Super+I definições; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
 if has_nvidia_gpu; then
   printf '%s\n' "NVIDIA DRM activo: depois do reboot confirma com: cat /sys/module/nvidia_drm/parameters/modeset (deve ser Y)."
 fi

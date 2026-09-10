@@ -38,7 +38,7 @@ Existing files are renamed with a `.bak.<timestamp>` suffix before overwrite.
 
 If an NVIDIA GPU is present (for example an RTX 3060), the installer also sets DRM/KMS, VA-API (`libva-nvidia-driver`), `/etc/environment`, Firefox `about:config` policies, and Chromium/Electron Wayland flags. On a VM without NVIDIA those steps are skipped so the session does not go black.
 
-The modifier key is **Super** (Windows). Hyprquickpaper is Super+W. Settings panel is Super+I.
+The modifier key is **Super** (Windows). Terminal is Super+Enter. Session panel is Super+F. Hyprquickpaper is Super+W. Settings panel is Super+I.
 
 ### Official packages
 
@@ -66,8 +66,8 @@ quickshell, gruvbox-dark-gtk
 - [**Gedit**](https://gedit-text-editor.org/) and [**Ark**](https://github.com/KDE/ark): editor and archive manager.
 - [**SDDM**](https://github.com/sddm/sddm) with [**qylock Field**](https://github.com/Darkkal44/qylock): display manager (replaces Ly).
 - [**hyprquickpaper**](https://github.com/iamsurjog/hyprquickpaper): wallpaper picker (`Super+W`).
-- **Session panel** (Quickshell): Arch icon next to the clock; MPRIS player plus Suspend / Reboot / Power off / Session (back to SDDM).
-- **Settings panel** (Quickshell): `Super+I` — network, display, sound, Bluetooth, power (hypridle screen timeout) and about. Escape or Super+I again closes it.
+- **Session panel** (Quickshell): Arch icon next to the clock, or `Super+F`; MPRIS player plus Suspend / Reboot / Power off / Session (back to SDDM). Super+F again, Super+X or Escape closes it.
+- **Settings panel** (Quickshell): `Super+I` — network, display, sound, Bluetooth, power (hypridle screen timeout) and about. Escape, Super+X or Super+I again closes it.
 - **Seahorse** and **gnome-keyring**: password/secrets store so Firefox stops asking for `org.freedesktop.secrets`.
 - **Ristretto**, **mpv**, **Evince**, **gnome-calculator**: image viewer, video, PDF, calculator (so files do not open in Firefox).
 - **btop** and **cmatrix**: system monitor and terminal matrix (`btop`, `cmatrix`).

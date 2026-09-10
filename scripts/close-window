@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Close the session overlay if it is open; otherwise close the focused window.
+set -euo pipefail
+
+qs_bin=""
+if command -v quickshell >/dev/null; then
+  qs_bin="$(command -v quickshell)"
+elif command -v qs >/dev/null; then
+  qs_bin="$(command -v qs)"
+fi
+
+if [[ -n "${qs_bin}" ]]; then
+  pids="$(pgrep -f "^${qs_bin} .*session-panel" || true)"
+  if [[ -n "${pids}" ]]; then
+    # shellcheck disable=SC2086
+    kill ${pids} 2>/dev/null || true
+    exit 0
+  fi
+fi
+
+exec hyprctl dispatch killactive
