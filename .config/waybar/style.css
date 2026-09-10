@@ -44,7 +44,6 @@ tooltip {
 }
 
 #workspaces,
-#clock.time,
 #custom-notification,
 #custom-weather,
 #backlight,
@@ -60,12 +59,32 @@ tooltip {
 /* ================================ */
 /*       Tray group styling         */
 /* ================================ */
+#centerclock,
 .modules-right {
   margin: 3px 10px 3px 5px;
   padding: 2.5px 8px;
   background: #32302f;
   border: 2px solid #d4be98;
   border-radius: 8px;
+}
+
+#centerclock #custom-arch,
+#centerclock #clock.time {
+  margin: 2px 4px 2px 3px;
+  padding: 1.5px 7px;
+  background: #32302f;
+  border: 1px solid #3c3836;
+  border-radius: 6px;
+}
+
+#custom-arch {
+  color: #d4be98;
+  font-size: 15px;
+}
+
+#custom-arch:hover {
+  color: #fbf1c7;
+  background: #3c3836;
 }
 
 .modules-right #tray {
@@ -140,8 +159,6 @@ tooltip {
 
 #clock.time {
   color: #d4be98;
-  margin-right: 8px;
-  padding: 2.5px 8px;
 }
 
 #clock.date {

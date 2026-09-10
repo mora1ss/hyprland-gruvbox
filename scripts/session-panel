@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Starts the session panel, or closes it if it is already running.
+# Only matches the real quickshell process, never this launcher.
+set -euo pipefail
+
+qs_bin=""
+if command -v quickshell >/dev/null; then
+  qs_bin="$(command -v quickshell)"
+elif command -v qs >/dev/null; then
+  qs_bin="$(command -v qs)"
+else
+  notify-send "session-panel" "quickshell não está instalado" 2>/dev/null || true
+  exit 1
+fi
+
+pids="$(pgrep -f "^${qs_bin} .*session-panel" || true)"
+if [[ -n "${pids}" ]]; then
+  # shellcheck disable=SC2086
+  kill ${pids} 2>/dev/null || true
+  exit 0
+fi
+
+exec "${qs_bin}" -c session-panel

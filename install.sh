@@ -96,6 +96,9 @@ PACMAN_PKGS=(
   ffmpeg
   xdg-user-dirs
   file
+  gnome-keyring
+  libsecret
+  seahorse
 )
 
 AUR_PKGS=(
@@ -229,6 +232,7 @@ EOF
 
 install -m 755 "${DOTFILES}/scripts/hyprquickpaper" "${HOME_DIR}/.local/bin/hyprquickpaper"
 install -m 755 "${DOTFILES}/scripts/set-wallpaper" "${HOME_DIR}/.local/bin/set-wallpaper"
+install -m 755 "${DOTFILES}/scripts/session-panel" "${HOME_DIR}/.local/bin/session-panel"
 xdg-user-dirs-update >/dev/null 2>&1 || true
 
 write_chromium_flags() {
@@ -369,8 +373,33 @@ sudo tee /etc/sddm.conf.d/10-qylock.conf >/dev/null <<'EOF'
 Current=field
 EOF
 
+ensure_sddm_gnome_keyring_pam() {
+  local pam="/etc/pam.d/sddm"
+  [[ -f "${pam}" ]] || return 0
+  if grep -q 'pam_gnome_keyring.so' "${pam}"; then
+    return 0
+  fi
+  info "a activar gnome-keyring no PAM do SDDM"
+  if grep -q '^auth[[:space:]].*include[[:space:]].*system-login' "${pam}"; then
+    sudo sed -i '/^auth[[:space:]].*include[[:space:]].*system-login/a auth       optional     pam_gnome_keyring.so' "${pam}"
+  else
+    printf '\nauth       optional     pam_gnome_keyring.so\n' | sudo tee -a "${pam}" >/dev/null
+  fi
+  if grep -q '^session[[:space:]].*include[[:space:]].*system-login' "${pam}"; then
+    sudo sed -i '/^session[[:space:]].*include[[:space:]].*system-login/a session    optional     pam_gnome_keyring.so auto_start' "${pam}"
+  else
+    printf 'session    optional     pam_gnome_keyring.so auto_start\n' | sudo tee -a "${pam}" >/dev/null
+  fi
+}
+
+ensure_sddm_gnome_keyring_pam
+
 info "a instalar hyprquickpaper"
 mkdir -p "${CONFIG_DIR}/quickshell"
+if [[ -d "${DOTFILES}/.config/quickshell/session-panel" ]]; then
+  rm -rf "${CONFIG_DIR}/quickshell/session-panel"
+  cp -a "${DOTFILES}/.config/quickshell/session-panel" "${CONFIG_DIR}/quickshell/session-panel"
+fi
 if [[ ! -d "${HQP_DIR}/.git" ]]; then
   rm -rf "${HQP_DIR}"
   git clone https://github.com/iamsurjog/hyprquickpaper.git "${HQP_DIR}"
@@ -450,7 +479,7 @@ fi
 info "instalação concluída"
 printf '%s\n' \
   "Reinicia o computador para entrar pelo SDDM (tema Field)." \
-  "No Hyprland: Super+W wallpapers; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
+  "No Hyprland: Super+W wallpapers; ícone Arch no relógio abre o painel de sessão; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
 if has_nvidia_gpu; then
   printf '%s\n' "NVIDIA DRM activo: depois do reboot confirma com: cat /sys/module/nvidia_drm/parameters/modeset (deve ser Y)."
 fi

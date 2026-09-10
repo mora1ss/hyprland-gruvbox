@@ -13,7 +13,7 @@
   ],
 
   "modules-center": [
-    "clock#time"
+    "group/centerclock"
   ],
 
   "modules-right": [
@@ -52,6 +52,21 @@
     "critical-threshold": 80,
     "format": "{temperatureC}°{icon}",
     "format-icons": [" ", "", " "]
+  },
+
+  "group/centerclock": {
+    "orientation": "horizontal",
+    "modules": [
+      "custom/arch",
+      "clock#time"
+    ]
+  },
+
+  "custom/arch": {
+    "format": "󰣇",
+    "tooltip": true,
+    "tooltip-format": "Menu",
+    "on-click": "$HOME/.local/bin/session-panel"
   },
 
   "clock#time": {
