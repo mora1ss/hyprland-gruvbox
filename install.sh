@@ -40,6 +40,7 @@ PACMAN_PKGS=(
   qt6-wayland
   qt5ct
   kitty
+  waybar
   dunst
   rofi-wayland
   neovim
@@ -100,8 +101,6 @@ PACMAN_PKGS=(
 AUR_PKGS=(
   quickshell
   gruvbox-dark-gtk
-  # 0.15.0 still sends "dispatch workspace N"; Hyprland Lua ignores that, so clicks do nothing
-  waybar-git
 )
 
 info "a actualizar o sistema e a instalar pacotes oficiais"
@@ -137,10 +136,6 @@ if ! command -v yay >/dev/null; then
 fi
 
 info "a instalar pacotes AUR"
-if pacman -Q waybar >/dev/null 2>&1 && ! pacman -Q waybar-git >/dev/null 2>&1; then
-  info "a substituir extra/waybar por waybar-git (cliques nos workspaces no Hyprland Lua)"
-  sudo pacman -R --noconfirm waybar
-fi
 yay -S --needed --noconfirm "${AUR_PKGS[@]}"
 
 info "a instalar Oh My Zsh"

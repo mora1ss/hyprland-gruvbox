@@ -9,7 +9,7 @@
 
   "modules-left": [
     "custom-arrow-left",
-    "hyprland/workspaces"
+    "ext/workspaces"
   ],
 
   "modules-center": [
@@ -33,18 +33,14 @@
     "tooltip": false
   },
 
-  "hyprland/workspaces": {
-    "disable-scroll": false,
+  "ext/workspaces": {
     "all-outputs": true,
+    "active-only": false,
     "tooltip": false,
-    "format": "{id}",
-    "sort-by-number": true,
-    "persistent-workspaces": {
-      "*": [1, 2, 3, 4, 5]
-    },
+    "format": "{name}",
+    "on-click": "activate",
     "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
-    "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
-    "on-click": "activate"
+    "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'"
   },
 
   "tray": {
