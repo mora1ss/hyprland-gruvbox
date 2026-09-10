@@ -25,7 +25,6 @@
     "battery#bat2",
     "pulseaudio",
     "clock#date"
-    "clock#date"
   ],
 
   "custom-arrow-left": {
