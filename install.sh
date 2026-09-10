@@ -99,6 +99,14 @@ PACMAN_PKGS=(
   gnome-keyring
   libsecret
   seahorse
+  ristretto
+  mpv
+  gnome-calculator
+  evince
+  tumbler
+  ffmpegthumbnailer
+  xdg-utils
+  gvfs-mtp
 )
 
 AUR_PKGS=(
@@ -188,6 +196,9 @@ cp -a "${DOTFILES}/.config/GTK/gtk-4.0" "${CONFIG_DIR}/gtk-4.0"
 
 backup_if_exists "${HOME_DIR}/.zshrc"
 cp -a "${DOTFILES}/.zshrc" "${HOME_DIR}/.zshrc"
+
+backup_if_exists "${CONFIG_DIR}/mimeapps.list"
+cp -a "${DOTFILES}/.config/mimeapps.list" "${CONFIG_DIR}/mimeapps.list"
 
 info "a criar pastas pessoais (Documentos, Transferências, Projetos, …)"
 mkdir -p \
