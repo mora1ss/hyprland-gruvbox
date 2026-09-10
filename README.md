@@ -12,43 +12,28 @@ A Gruvbox theme based on other Gruvbox creations to be able to modify and create
 
 ## Install (Arch Linux, profile minimal)
 
-After `archinstall` with the **minimal** profile, as a normal user:
+After `archinstall` with the **minimal** profile, as a normal user.
+
+During `archinstall`, **do not** select:
+
+- Desktop / Hyprland / KDE / GNOME (or any other desktop profile)
+- A display manager (Ly, GDM, LightDM, SDDM) — this rice installs SDDM afterwards
+- PipeWire / extra audio stacks — the installer sets that up
+- NVIDIA / proprietary GPU drivers — the installer detects the card after reboot
+- Ly anywhere
+
+You still want a normal user in `wheel`, NetworkManager, and `git` so you can clone this repo from the TTY.
 
 ```bash
 sudo pacman -S --needed git
-git clone <your-repo-url> ~/hyprland-gruvbox
+git clone git@github.com:mora1ss/hyprland-gruvbox.git ~/hyprland-gruvbox
+# git clone https://github.com/mora1ss/hyprland-gruvbox.git ~/hyprland-gruvbox
 cd ~/hyprland-gruvbox
 chmod +x install.sh
 ./install.sh
 ```
 
-Then reboot. SDDM starts with the [qylock](https://github.com/Darkkal44/qylock) **Field** theme. Log into **Hyprland**.
-
-The installer:
-
-- installs official packages with `pacman` and AUR packages with `yay` (builds `yay` if missing)
-- installs Oh My Zsh plus `zsh-autosuggestions` and `zsh-syntax-highlighting`
-- copies configs from `.config` into `~/.config` (GTK into `gtk-3.0` / `gtk-4.0`, not a `GTK/` folder)
-- copies `wallpaper/rockman.png` to `~/Imagens/Wallpapers/`
-- configures SDDM (not Ly) with qylock Field
-- clones [hyprquickpaper](https://github.com/iamsurjog/hyprquickpaper) to `~/.config/quickshell/hyprquickpaper`
-- enables `sddm` and `NetworkManager` (and `bluetooth` when the unit exists)
-
-Existing files are renamed with a `.bak.<timestamp>` suffix before overwrite.
-
-If an NVIDIA GPU is present (for example an RTX 3060), the installer also sets DRM/KMS, VA-API (`libva-nvidia-driver`), `/etc/environment`, Firefox `about:config` policies, and Chromium/Electron Wayland flags. On a VM without NVIDIA those steps are skipped so the session does not go black.
-
-The modifier key is **Super** (Windows). Terminal is Super+Enter. Session panel is Super+F. Hyprquickpaper is Super+W. Settings panel is Super+I.
-
-### Official packages
-
-hyprland, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, qt5-wayland, qt6-wayland, qt5ct, kitty, waybar, dunst, rofi-wayland, neovim, fastfetch, thunar, thunar-archive-plugin, gvfs, firefox, hyprshot, awww, brightnessctl, playerctl, pavucontrol, networkmanager, pipewire, pipewire-pulse, wireplumber, sddm, qt6-declarative, qt6-5compat, qt6-svg, qt6-multimedia, qt6-multimedia-ffmpeg, gst-plugins-base, gst-plugins-good, gst-plugins-bad, gst-plugins-ugly, fzf, zsh, git, base-devel, nwg-look, gedit, ark, papirus-icon-theme, ttf-firacode-nerd, ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols, adwaita-fonts, noto-fonts, noto-fonts-emoji, alacritty, polkit-kde-agent, imagemagick, jq, code, grim, slurp, wl-clipboard, pciutils, ffmpeg, gnome-keyring, libsecret, seahorse, ristretto, mpv, gnome-calculator, evince, tumbler, ffmpegthumbnailer, xdg-utils, gvfs-mtp, btop, cmatrix, bluez, bluez-utils, hypridle
-
-NVIDIA (only if a card is detected): nvidia-open, nvidia-utils, nvidia-settings, libva, libva-nvidia-driver, egl-wayland, matching kernel headers
-
-### AUR packages
-
-quickshell, gruvbox-dark-gtk
+If SSH is not available yet (typical on a fresh minimal VM), use the HTTPS line instead.
 
 ## What is included?
 

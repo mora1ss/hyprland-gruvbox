@@ -10,7 +10,7 @@ hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(home .. "/.local/bin/session-panel"),
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(home .. "/.local/bin/close-window"), { dont_inhibit = true, allow_input_capture = true })
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(home .. "/.local/bin/hyprquickpaper"), { dont_inhibit = true, allow_input_capture = true })
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd(home .. "/.local/bin/settings-panel"), { dont_inhibit = true, allow_input_capture = true })
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("hyprctl dispatch exit"))
+hl.bind(mainMod .. " + M", hl.dsp.exit())
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + J", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))

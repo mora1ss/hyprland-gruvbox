@@ -213,13 +213,7 @@ ShellRoot {
             glyph: "󰍃"
             label: "Sessão"
             tint: "#d4be98"
-            onClicked: {
-              const sid = Quickshell.env("XDG_SESSION_ID")
-              if (sid)
-                win.run(["loginctl", "terminate-session", sid])
-              else
-                win.run(["hyprctl", "dispatch", "exit"])
-            }
+            onClicked: win.run(["hyprctl", "dispatch", "hl.dsp.exit()"])
           }
         }
       }
