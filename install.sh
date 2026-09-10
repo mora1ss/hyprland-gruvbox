@@ -107,6 +107,8 @@ PACMAN_PKGS=(
   ffmpegthumbnailer
   xdg-utils
   gvfs-mtp
+  btop
+  cmatrix
 )
 
 AUR_PKGS=(
@@ -193,6 +195,12 @@ backup_if_exists "${CONFIG_DIR}/gtk-4.0"
 mkdir -p "${CONFIG_DIR}"
 cp -a "${DOTFILES}/.config/GTK/gtk-3.0" "${CONFIG_DIR}/gtk-3.0"
 cp -a "${DOTFILES}/.config/GTK/gtk-4.0" "${CONFIG_DIR}/gtk-4.0"
+
+if command -v gsettings >/dev/null; then
+  gsettings set org.gnome.desktop.interface gtk-theme "gruvbox-dark-gtk" 2>/dev/null || true
+  gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark" 2>/dev/null || true
+  gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
+fi
 
 backup_if_exists "${HOME_DIR}/.zshrc"
 cp -a "${DOTFILES}/.zshrc" "${HOME_DIR}/.zshrc"
