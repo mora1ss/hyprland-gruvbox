@@ -18,4 +18,5 @@ if [[ -n "${qs_bin}" ]]; then
   fi
 fi
 
-exec hyprctl dispatch killactive
+# Hyprland 0.55+ Lua: killactive is not a valid dispatcher.
+exec hyprctl dispatch 'hl.dsp.window.close()'
