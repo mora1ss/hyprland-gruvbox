@@ -13,7 +13,7 @@
   ],
 
   "modules-center": [
-    "clock"
+    "clock#time"
   ],
 
   "modules-right": [
@@ -24,7 +24,8 @@
     "temperature",
     "battery#bat2",
     "network",
-    "pulseaudio"
+    "pulseaudio",
+    "clock#date"
   ],
 
   "custom-arrow-left": {
@@ -41,8 +42,8 @@
     "persistent-workspaces": {
       "*": [1, 2, 3, 4, 5]
     },
-    "on-scroll-up": "hyprctl dispatch workspace e+1",
-    "on-scroll-down": "hyprctl dispatch workspace e-1",
+    "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })'",
+    "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })'",
     "on-click": "activate"
   },
 
@@ -57,8 +58,13 @@
     "format-icons": [" ", "", " "]
   },
 
-  "clock": {
-    "format": "{:%I:%M %p - %a, %d %b %Y}",
+  "clock#time": {
+    "format": "{:%I:%M %p}",
+    "tooltip": false
+  },
+
+  "clock#date": {
+    "format": "{:%d/%m/%Y}",
     "tooltip": false
   },
 

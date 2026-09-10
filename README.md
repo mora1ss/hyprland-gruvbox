@@ -42,13 +42,13 @@ The modifier key is **Super** (Windows). Hyprquickpaper is Super+W.
 
 ### Official packages
 
-hyprland, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, qt5-wayland, qt6-wayland, qt5ct, kitty, waybar, dunst, rofi-wayland, neovim, fastfetch, thunar, thunar-archive-plugin, gvfs, firefox, hyprshot, awww, brightnessctl, playerctl, pavucontrol, networkmanager, pipewire, pipewire-pulse, wireplumber, sddm, qt6-declarative, qt6-5compat, qt6-svg, qt6-multimedia, qt6-multimedia-ffmpeg, gst-plugins-base, gst-plugins-good, gst-plugins-bad, gst-plugins-ugly, fzf, zsh, git, base-devel, nwg-look, gedit, ark, papirus-icon-theme, ttf-firacode-nerd, ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols, adwaita-fonts, noto-fonts, noto-fonts-emoji, alacritty, polkit-kde-agent, imagemagick, jq, code, grim, slurp, wl-clipboard, pciutils, ffmpeg
+hyprland, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, qt5-wayland, qt6-wayland, qt5ct, kitty, dunst, rofi-wayland, neovim, fastfetch, thunar, thunar-archive-plugin, gvfs, firefox, hyprshot, awww, brightnessctl, playerctl, pavucontrol, networkmanager, pipewire, pipewire-pulse, wireplumber, sddm, qt6-declarative, qt6-5compat, qt6-svg, qt6-multimedia, qt6-multimedia-ffmpeg, gst-plugins-base, gst-plugins-good, gst-plugins-bad, gst-plugins-ugly, fzf, zsh, git, base-devel, nwg-look, gedit, ark, papirus-icon-theme, ttf-firacode-nerd, ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols, adwaita-fonts, noto-fonts, noto-fonts-emoji, alacritty, polkit-kde-agent, imagemagick, jq, code, grim, slurp, wl-clipboard, pciutils, ffmpeg
 
 NVIDIA (only if a card is detected): nvidia-open, nvidia-utils, nvidia-settings, libva, libva-nvidia-driver, egl-wayland, matching kernel headers
 
 ### AUR packages
 
-quickshell, gruvbox-dark-gtk
+quickshell, gruvbox-dark-gtk, waybar-git (needed so workspace clicks work with Hyprland Lua; extra/waybar 0.15.0 does not)
 
 ## What is included?
 

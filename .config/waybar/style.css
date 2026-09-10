@@ -34,7 +34,8 @@ tooltip {
 #battery,
 #temperature,
 #network,
-#pulseaudio{
+#pulseaudio,
+#clock.date {
   margin: 2px 10px 2px 3px;
   padding: 1.5px 7px;
   background: #32302f;
@@ -43,7 +44,7 @@ tooltip {
 }
 
 #workspaces,
-#clock,
+#clock.time,
 #custom-notification,
 #custom-weather,
 #backlight,
@@ -137,10 +138,14 @@ tooltip {
 /*       Individual modules         */
 /* ================================ */
 
-#clock {
+#clock.time {
   color: #d4be98;
   margin-right: 8px;
   padding: 2.5px 8px;
+}
+
+#clock.date {
+  color: #d4be98;
 }
 
 #tray {
