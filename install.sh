@@ -109,6 +109,9 @@ PACMAN_PKGS=(
   gvfs-mtp
   btop
   cmatrix
+  bluez
+  bluez-utils
+  hypridle
 )
 
 AUR_PKGS=(
@@ -255,6 +258,7 @@ EOF
 install -m 755 "${DOTFILES}/scripts/hyprquickpaper" "${HOME_DIR}/.local/bin/hyprquickpaper"
 install -m 755 "${DOTFILES}/scripts/set-wallpaper" "${HOME_DIR}/.local/bin/set-wallpaper"
 install -m 755 "${DOTFILES}/scripts/session-panel" "${HOME_DIR}/.local/bin/session-panel"
+install -m 755 "${DOTFILES}/scripts/settings-panel" "${HOME_DIR}/.local/bin/settings-panel"
 mkdir -p "${HOME_DIR}/.local/share/applications"
 install -m 644 "${DOTFILES}/.local/share/applications/mpv.desktop" "${HOME_DIR}/.local/share/applications/mpv.desktop"
 if command -v update-desktop-database >/dev/null; then
@@ -427,6 +431,11 @@ if [[ -d "${DOTFILES}/.config/quickshell/session-panel" ]]; then
   rm -rf "${CONFIG_DIR}/quickshell/session-panel"
   cp -a "${DOTFILES}/.config/quickshell/session-panel" "${CONFIG_DIR}/quickshell/session-panel"
 fi
+if [[ -d "${DOTFILES}/.config/quickshell/settings-panel" ]]; then
+  rm -rf "${CONFIG_DIR}/quickshell/settings-panel"
+  cp -a "${DOTFILES}/.config/quickshell/settings-panel" "${CONFIG_DIR}/quickshell/settings-panel"
+  chmod +x "${CONFIG_DIR}/quickshell/settings-panel/ctl.sh"
+fi
 if [[ ! -d "${HQP_DIR}/.git" ]]; then
   rm -rf "${HQP_DIR}"
   git clone https://github.com/iamsurjog/hyprquickpaper.git "${HQP_DIR}"
@@ -474,6 +483,9 @@ fi
 sudo systemctl enable NetworkManager.service
 sudo systemctl enable sddm.service
 sudo systemctl enable --now pipewire.socket pipewire-pulse.socket wireplumber.service 2>/dev/null || true
+if systemctl list-unit-files bluetooth.service >/dev/null 2>&1; then
+  sudo systemctl enable bluetooth.service
+fi
 
 retry_user_password() {
   local prompt="$1"
@@ -506,7 +518,7 @@ fi
 info "instalação concluída"
 printf '%s\n' \
   "Reinicia o computador para entrar pelo SDDM (tema Field)." \
-  "No Hyprland: Super+W wallpapers; ícone Arch no relógio abre o painel de sessão; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
+  "No Hyprland: Super+W wallpapers; Super+I definições; ícone Arch no relógio abre o painel de sessão; Super+N região; Super+Shift+N ecrã; Super+Alt+N janela."
 if has_nvidia_gpu; then
   printf '%s\n' "NVIDIA DRM activo: depois do reboot confirma com: cat /sys/module/nvidia_drm/parameters/modeset (deve ser Y)."
 fi

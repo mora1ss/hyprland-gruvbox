@@ -191,28 +191,28 @@ ShellRoot {
           SysButton {
             glyph: "󰒲"
             label: "Suspender"
-            tint: "#83a598"
+            tint: "#d8a657"
             onClicked: win.run(["systemctl", "suspend"])
           }
 
           SysButton {
             glyph: "󰜉"
             label: "Reiniciar"
-            tint: "#83a598"
+            tint: "#e78a4e"
             onClicked: win.run(["systemctl", "reboot"])
           }
 
           SysButton {
             glyph: "󰐥"
             label: "Desligar"
-            tint: "#fb4934"
+            tint: "#ea6962"
             onClicked: win.run(["systemctl", "poweroff"])
           }
 
           SysButton {
             glyph: "󰍃"
             label: "Sessão"
-            tint: "#83a598"
+            tint: "#d4be98"
             onClicked: {
               const sid = Quickshell.env("XDG_SESSION_ID")
               if (sid)
@@ -291,7 +291,9 @@ ShellRoot {
     Layout.fillHeight: true
     implicitHeight: 44
     radius: 8
-    color: mouse.containsMouse ? Qt.lighter(tint, 1.12) : tint
+    color: mouse.containsMouse ? "#504945" : "#3c3836"
+    border.color: "#504945"
+    border.width: 1
 
     MouseArea {
       id: mouse
@@ -321,7 +323,7 @@ ShellRoot {
     Text {
       anchors.centerIn: parent
       text: sysBtn.glyph
-      color: "#1d2021"
+      color: sysBtn.tint
       font.family: "FiraCode Nerd Font Mono"
       font.pixelSize: 20
       font.bold: true

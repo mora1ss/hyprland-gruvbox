@@ -32,17 +32,17 @@ The installer:
 - copies `wallpaper/rockman.png` to `~/Imagens/Wallpapers/`
 - configures SDDM (not Ly) with qylock Field
 - clones [hyprquickpaper](https://github.com/iamsurjog/hyprquickpaper) to `~/.config/quickshell/hyprquickpaper`
-- enables `sddm` and `NetworkManager`
+- enables `sddm` and `NetworkManager` (and `bluetooth` when the unit exists)
 
 Existing files are renamed with a `.bak.<timestamp>` suffix before overwrite.
 
 If an NVIDIA GPU is present (for example an RTX 3060), the installer also sets DRM/KMS, VA-API (`libva-nvidia-driver`), `/etc/environment`, Firefox `about:config` policies, and Chromium/Electron Wayland flags. On a VM without NVIDIA those steps are skipped so the session does not go black.
 
-The modifier key is **Super** (Windows). Hyprquickpaper is Super+W.
+The modifier key is **Super** (Windows). Hyprquickpaper is Super+W. Settings panel is Super+I.
 
 ### Official packages
 
-hyprland, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, qt5-wayland, qt6-wayland, qt5ct, kitty, waybar, dunst, rofi-wayland, neovim, fastfetch, thunar, thunar-archive-plugin, gvfs, firefox, hyprshot, awww, brightnessctl, playerctl, pavucontrol, networkmanager, pipewire, pipewire-pulse, wireplumber, sddm, qt6-declarative, qt6-5compat, qt6-svg, qt6-multimedia, qt6-multimedia-ffmpeg, gst-plugins-base, gst-plugins-good, gst-plugins-bad, gst-plugins-ugly, fzf, zsh, git, base-devel, nwg-look, gedit, ark, papirus-icon-theme, ttf-firacode-nerd, ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols, adwaita-fonts, noto-fonts, noto-fonts-emoji, alacritty, polkit-kde-agent, imagemagick, jq, code, grim, slurp, wl-clipboard, pciutils, ffmpeg, gnome-keyring, libsecret, seahorse, ristretto, mpv, gnome-calculator, evince, tumbler, ffmpegthumbnailer, xdg-utils, gvfs-mtp, btop, cmatrix
+hyprland, xdg-desktop-portal-hyprland, xdg-desktop-portal-gtk, qt5-wayland, qt6-wayland, qt5ct, kitty, waybar, dunst, rofi-wayland, neovim, fastfetch, thunar, thunar-archive-plugin, gvfs, firefox, hyprshot, awww, brightnessctl, playerctl, pavucontrol, networkmanager, pipewire, pipewire-pulse, wireplumber, sddm, qt6-declarative, qt6-5compat, qt6-svg, qt6-multimedia, qt6-multimedia-ffmpeg, gst-plugins-base, gst-plugins-good, gst-plugins-bad, gst-plugins-ugly, fzf, zsh, git, base-devel, nwg-look, gedit, ark, papirus-icon-theme, ttf-firacode-nerd, ttf-jetbrains-mono-nerd, ttf-nerd-fonts-symbols, adwaita-fonts, noto-fonts, noto-fonts-emoji, alacritty, polkit-kde-agent, imagemagick, jq, code, grim, slurp, wl-clipboard, pciutils, ffmpeg, gnome-keyring, libsecret, seahorse, ristretto, mpv, gnome-calculator, evince, tumbler, ffmpegthumbnailer, xdg-utils, gvfs-mtp, btop, cmatrix, bluez, bluez-utils, hypridle
 
 NVIDIA (only if a card is detected): nvidia-open, nvidia-utils, nvidia-settings, libva, libva-nvidia-driver, egl-wayland, matching kernel headers
 
@@ -67,6 +67,7 @@ quickshell, gruvbox-dark-gtk
 - [**SDDM**](https://github.com/sddm/sddm) with [**qylock Field**](https://github.com/Darkkal44/qylock): display manager (replaces Ly).
 - [**hyprquickpaper**](https://github.com/iamsurjog/hyprquickpaper): wallpaper picker (`Super+W`).
 - **Session panel** (Quickshell): Arch icon next to the clock; MPRIS player plus Suspend / Reboot / Power off / Session (back to SDDM).
+- **Settings panel** (Quickshell): `Super+I` — network, display, sound, Bluetooth, power (hypridle screen timeout) and about. Escape or Super+I again closes it.
 - **Seahorse** and **gnome-keyring**: password/secrets store so Firefox stops asking for `org.freedesktop.secrets`.
 - **Ristretto**, **mpv**, **Evince**, **gnome-calculator**: image viewer, video, PDF, calculator (so files do not open in Firefox).
 - **btop** and **cmatrix**: system monitor and terminal matrix (`btop`, `cmatrix`).
