@@ -200,6 +200,9 @@ cp -a "${DOTFILES}/.zshrc" "${HOME_DIR}/.zshrc"
 backup_if_exists "${CONFIG_DIR}/mimeapps.list"
 cp -a "${DOTFILES}/.config/mimeapps.list" "${CONFIG_DIR}/mimeapps.list"
 
+backup_if_exists "${CONFIG_DIR}/mpv"
+cp -a "${DOTFILES}/.config/mpv" "${CONFIG_DIR}/mpv"
+
 info "a criar pastas pessoais (Documentos, Transferências, Projetos, …)"
 mkdir -p \
   "${HOME_DIR}/Ambiente de Trabalho" \
@@ -244,6 +247,11 @@ EOF
 install -m 755 "${DOTFILES}/scripts/hyprquickpaper" "${HOME_DIR}/.local/bin/hyprquickpaper"
 install -m 755 "${DOTFILES}/scripts/set-wallpaper" "${HOME_DIR}/.local/bin/set-wallpaper"
 install -m 755 "${DOTFILES}/scripts/session-panel" "${HOME_DIR}/.local/bin/session-panel"
+mkdir -p "${HOME_DIR}/.local/share/applications"
+install -m 644 "${DOTFILES}/.local/share/applications/mpv.desktop" "${HOME_DIR}/.local/share/applications/mpv.desktop"
+if command -v update-desktop-database >/dev/null; then
+  update-desktop-database "${HOME_DIR}/.local/share/applications" >/dev/null 2>&1 || true
+fi
 xdg-user-dirs-update >/dev/null 2>&1 || true
 
 write_chromium_flags() {
